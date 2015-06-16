@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props" Condition="Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{07EEF833-31F9-407A-919A-73070F292D9F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MetricSystem</RootNamespace>
+    <AssemblyName>MetricSystem.Schemas</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AssemblyClsCompliant>false</AssemblyClsCompliant>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bond">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Bond.Attributes">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.Attributes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Bond.IO">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.IO.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Bond.JSON">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.JSON.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BatchCounterQuery.cs" />
+    <Compile Include="BatchQueryRequest.cs" />
+    <Compile Include="BatchQueryResponse.cs" />
+    <Compile Include="CounterInfo.cs" />
+    <Compile Include="CounterInfoResponse.cs" />
+    <Compile Include="CounterQueryResponse.cs" />
+    <Compile Include="CounterType.cs" />
+    <Compile Include="CounterWriteOperation.cs" />
+    <Compile Include="CounterWriteRequest.cs" />
+    <Compile Include="DataSample.cs" />
+    <Compile Include="ListServerResponse.cs" />
+    <Compile Include="MetricSystemResponse.cs" />
+    <Compile Include="PersistedData.cs" />
+    <Compile Include="RequestDetails.cs" />
+    <Compile Include="RequestStatus.cs" />
+    <Compile Include="RestCommands.cs" />
+    <Compile Include="Schemas.cs" />
+    <Compile Include="Protocol.cs" />
+    <Compile Include="ReservedDimensions.cs" />
+    <Compile Include="ServerInfo.cs" />
+    <Compile Include="ServerRegistration.cs" />
+    <Compile Include="TieredRequest.cs" />
+    <Compile Include="TieredResponse.cs" />
+    <Compile Include="TransferQueryRequest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props'))" />
+    <Error Condition="!Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets" Condition="Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets')" />
+</Project>
