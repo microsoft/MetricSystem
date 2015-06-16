@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props" Condition="Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProjectGuid>{FEFCF3A4-CDA1-4372-8246-7673F5239F4E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MetricSystem.Data.UnitTests</RootNamespace>
+    <AssemblyName>MetricSystem.Data.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TestProjectType>UnitTest</TestProjectType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyClsCompliant>false</AssemblyClsCompliant>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bond">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Bond.Attributes">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.Attributes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Bond.IO">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.IO.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Bond.JSON">
+      <HintPath>..\..\packages\Bond.Runtime.CSharp.3.0.6\lib\net45\Bond.JSON.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream">
+      <HintPath>..\..\packages\Microsoft.IO.RecyclableMemoryStream.1.0.0.0\lib\net45\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BufferedKeyPointersTests.cs" />
+    <Compile Include="BufferedValueArraysTests.cs" />
+    <Compile Include="CounterConfigurationTests.cs" />
+    <Compile Include="DataBucketTests.cs" />
+    <Compile Include="DataCompactionTests.cs" />
+    <Compile Include="DataSetTests.cs" />
+    <Compile Include="DimensionSetTests.cs" />
+    <Compile Include="DataManagerTests.cs" />
+    <Compile Include="HistogramCounterTests.cs" />
+    <Compile Include="InternalDataTests.cs" />
+    <Compile Include="KeyedDataStoreTests.cs" />
+    <Compile Include="KeyTests.cs" />
+    <Compile Include="KeyedDataMergeTests.cs" />
+    <Compile Include="PerformanceTests.cs" />
+    <Compile Include="PersistedDataTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Configuration\Configuration.csproj">
+      <Project>{04617d63-7ce3-465c-b9f8-241d6de36b06}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Data\Data.csproj">
+      <Project>{50866d67-a886-44b6-b82f-c63c2a515cc2}</Project>
+      <Name>MetricSystem.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Schemas\Schemas.csproj">
+      <Project>{07eef833-31f9-407a-919a-73070f292d9f}</Project>
+      <Name>Schemas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Utilities\Utilities.csproj">
+      <Project>{a92fc404-fb2b-4b81-ab15-e1dad13623c9}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.props'))" />
+    <Error Condition="!Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets" Condition="Exists('..\..\packages\Bond.CSharp.3.0.6\build\Bond.CSharp.targets')" />
+</Project>
