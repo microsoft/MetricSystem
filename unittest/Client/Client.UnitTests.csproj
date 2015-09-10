@@ -83,7 +83,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Client\Client.csproj">
       <Project>{1b0d3105-1956-4de7-a5fc-6f2343047b05}</Project>
-      <Name>MetricSystem.QueryClient</Name>
+      <Name>Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Data\Data.csproj">
       <Project>{50866d67-a886-44b6-b82f-c63c2a515cc2}</Project>

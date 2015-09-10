@@ -92,7 +92,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\src\Data\Data.csproj">
       <Project>{50866d67-a886-44b6-b82f-c63c2a515cc2}</Project>
-      <Name>MetricSystem.Data</Name>
+      <Name>Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Schemas\Schemas.csproj">
       <Project>{07eef833-31f9-407a-919a-73070f292d9f}</Project>

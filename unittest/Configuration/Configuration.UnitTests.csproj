@@ -54,7 +54,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Configuration\Configuration.csproj">
       <Project>{04617d63-7ce3-465c-b9f8-241d6de36b06}</Project>
-      <Name>MetricSystem.Configuration</Name>
+      <Name>Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.UnitTests.csproj">
       <Project>{c133ad99-aca3-4e9b-8fcd-6dcb3ce0a68e}</Project>

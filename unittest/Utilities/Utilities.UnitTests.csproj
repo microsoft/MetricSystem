@@ -76,7 +76,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Utilities\Utilities.csproj">
       <Project>{a92fc404-fb2b-4b81-ab15-e1dad13623c9}</Project>
-      <Name>MetricSystem.Utilities</Name>
+      <Name>Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

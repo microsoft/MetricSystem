@@ -95,7 +95,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\src\Server\Server.csproj">
       <Project>{9C173A23-5DEB-4805-BB92-25553B32C344}</Project>
-      <Name>MetricSystem.Server</Name>
+      <Name>Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Utilities\Utilities.csproj">
       <Project>{a92fc404-fb2b-4b81-ab15-e1dad13623c9}</Project>

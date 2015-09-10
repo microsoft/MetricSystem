@@ -12,23 +12,23 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "> 
-    <DebugSymbols>true</DebugSymbols> 
-    <DebugType>full</DebugType> 
-    <Optimize>false</Optimize> 
-    <OutputPath>bin\Debug\</OutputPath> 
-    <DefineConstants>DEBUG;TRACE</DefineConstants> 
-    <ErrorReport>prompt</ErrorReport> 
-    <WarningLevel>4</WarningLevel> 
-  </PropertyGroup> 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "> 
-    <DebugType>pdbonly</DebugType> 
-    <Optimize>true</Optimize> 
-    <OutputPath>bin\Release\</OutputPath> 
-    <DefineConstants>TRACE</DefineConstants> 
-    <ErrorReport>prompt</ErrorReport> 
-    <WarningLevel>4</WarningLevel> 
-  </PropertyGroup> 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.IO.RecyclableMemoryStream">
       <HintPath>..\..\packages\Microsoft.IO.RecyclableMemoryStream.1.0.0.0\lib\net45\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
@@ -57,7 +57,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Schemas\Schemas.csproj">
       <Project>{07eef833-31f9-407a-919a-73070f292d9f}</Project>
-      <Name>MetricSystem.Schemas</Name>
+      <Name>Schemas</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
