@@ -589,16 +589,16 @@ namespace MetricSystem.Data
         /// <returns>An enumeration of all known values. Values may be repeated.</returns>
         public IEnumerable<string> GetDimensionValues(string dimensionName, DimensionSpecification filterDims)
         {
-            var offset = this.DimensionSet.GetOffsetOfDimension(dimensionName);
-            if (offset < 0)
-            {
-                yield break;
-            }
-
             this.Pin();
 
             try
             {
+                var offset = this.DimensionSet.GetOffsetOfDimension(dimensionName);
+                if (offset < 0)
+                {
+                    yield break;
+                }
+
                 Key filter = this.DimensionSet.CreateKey(filterDims);
                 foreach (var kvp in this.data.GetMatchingPairs(filter))
                 {

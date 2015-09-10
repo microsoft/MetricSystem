@@ -75,7 +75,7 @@
     <Compile Include="DataSample.cs" />
     <Compile Include="ListServerResponse.cs" />
     <Compile Include="MetricSystemResponse.cs" />
-    <Compile Include="PersistedData.cs" />
+    <Compile Include="PersistedDataType.cs" />
     <Compile Include="RequestDetails.cs" />
     <Compile Include="RequestStatus.cs" />
     <Compile Include="RestCommands.cs" />

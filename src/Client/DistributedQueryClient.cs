@@ -44,10 +44,9 @@ namespace MetricSystem.Client
     public class DistributedQueryClient
     {
         /// <summary>
-        /// Mockable interface which abstracts HttpWebClient usage. 
-        /// Unit tests implement this in another assembly (hence 'internal' access)
+        /// Mockable interface which abstracts HttpWebClient usage. May also be overidden to control the method in which requests are made.
         /// </summary>
-        internal static IHttpRequesterFactory RequesterFactory = new HttpRequesterFactory();
+        public static IHttpRequesterFactory RequesterFactory = new HttpRequesterFactory();
 
         /// <summary>
         /// Random number used to randomly select a leader in a query block
