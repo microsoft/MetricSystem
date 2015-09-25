@@ -240,13 +240,13 @@ namespace MetricSystem.Data
                 CheckedRead(lengthData, sizeof(long));
                 var length = BitConverter.ToInt64(lengthData, 0);
                 var dataLength = length - sizeof(uint);
-                var compressed = false;
-                if ((length & PersistedDataProtocol.CompressionFlag) != 0)
+                bool compressed;
+                PersistedDataProtocol.CompressionType compressionType;
+                length = PersistedDataProtocol.DeserializeBufferLengthValue(length, out compressed, out compressionType);
+                if (compressed)
                 {
                     CheckedRead(lengthData, sizeof(long));
                     dataLength = BitConverter.ToInt64(lengthData, 0);
-                    compressed = true;
-                    length &= ~PersistedDataProtocol.CompressionFlag;
                 }
 
                 var crcData = new byte[sizeof(uint)];

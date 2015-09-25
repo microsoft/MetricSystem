@@ -122,6 +122,11 @@ namespace MetricSystem.Utilities
             ByteConverter.FixedLengthEncoding.Encode(value, this.intermediateBufferStream.GetBuffer(), this.innerStream);
         }
 
+        public void WriteInt64(long value)
+        {
+            ByteConverter.FixedLengthEncoding.Encode(value, this.intermediateBufferStream.GetBuffer(), this.innerStream);
+        }
+
         public void WriteUInt64(ulong value)
         {
             ByteConverter.FixedLengthEncoding.Encode(value, this.intermediateBufferStream.GetBuffer(), this.innerStream);

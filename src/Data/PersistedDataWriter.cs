@@ -156,21 +156,14 @@ namespace MetricSystem.Data
 
                 var currentPosition = this.sourceStream.Position;
                 var length = currentPosition - startPosition - sizeof(long);
-                if ((length & PersistedDataProtocol.CompressionFlag) != 0)
-                {
-                    // This is wildly unlikely at the time of authoring. :)
-                    throw new PersistedDataException("Written data length exceeds allowed alue.");
-                }
+                length = PersistedDataProtocol.SerializeBufferLengthValue(length, shouldCompress,
+                                                                          PersistedDataProtocol.CompressionType.GZip);
 
                 this.sourceStream.Position = startPosition;
+                this.sourceStreamWriter.WriteInt64(length);
                 if (shouldCompress)
                 {
-                    this.sourceStreamWriter.WriteUInt64((ulong)(length | PersistedDataProtocol.CompressionFlag));
-                    this.sourceStreamWriter.WriteUInt64((ulong)uncompressedLength);
-                }
-                else
-                {
-                    this.sourceStreamWriter.WriteUInt64((ulong)length);
+                    this.sourceStreamWriter.WriteInt64(uncompressedLength);
                 }
                 this.sourceStream.Position = currentPosition;
             }
