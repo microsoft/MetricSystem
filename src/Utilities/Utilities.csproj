@@ -61,6 +61,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArraySegmentStream.cs" />
+    <Compile Include="LZ4\ILZ4CodecProvider.cs" />
+    <Compile Include="LZ4\LZ4Codec.cs" />
+    <Compile Include="LZ4\LZ4NetCodecProvider.cs" />
+    <Compile Include="LZ4\LZ4NetStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BondSerializationExtensionMethods.cs" />
     <Compile Include="BufferReader.cs" />
