@@ -28,6 +28,7 @@ namespace MetricSystem.Data
 
     using Microsoft.IO;
     using MetricSystem.Utilities;
+    using MetricSystem.Utilities.LZ4;
 
     using VariableLengthEncoding = MetricSystem.Utilities.ByteConverter.VariableLengthEncoding;
 
@@ -164,14 +165,9 @@ namespace MetricSystem.Data
             {
                 try
                 {
-                    // NOTE: the legacy code used simple bond for this, but the impact is the same -- it wrote a single
-                    // uint16 for us to read.
                     var version = readerStream.ReadUInt16();
                     if (version != PersistedDataProtocol.ProtocolVersion)
                     {
-                        // NOTE: The current previous protocol version isn't supported in this release for various reasons (this may
-                        // change in future) so we do not want to try.
-#if false
                         if (version == PersistedDataProtocol.PreviousProtocolVersion)
                         {
                             this.usePreviousProtocol = true;
@@ -180,9 +176,6 @@ namespace MetricSystem.Data
                         {
                             throw new PersistedDataException("Attempted to read protocol data of unsupported version.");
                         }
-#else
-                            throw new PersistedDataException("Attempted to read protocol data of unsupported version.");
-#endif
                     }
                     this.Version = version;
                 }
@@ -196,7 +189,14 @@ namespace MetricSystem.Data
                 {
                     var blockLength = readerStream.ReadUInt64();
                     this.nextHeaderOffset = this.sourceStream.Position + (long)blockLength;
-                    this.Header = this.LoadHeader();
+                    if (this.usePreviousProtocol)
+                    {
+                        this.Header = this.LoadLegacyHeader();
+                    }
+                    else
+                    {
+                        this.Header = this.LoadHeader();
+                    }
 
                     if (this.TargetDimensionSet == null)
                     {
@@ -224,7 +224,16 @@ namespace MetricSystem.Data
             var read = this.sourceStream.Read(destination, 0, (int)expectedLength);
             if (read != expectedLength)
             {
-                throw new PersistedDataException(string.Format("Read {0} bytes, expected {1}", read, expectedLength)) ;
+                throw new PersistedDataException(string.Format("Read {0} bytes, expected {1}", read, expectedLength));
+            }
+        }
+
+        private static void LegacyCheckedRead(Stream stream, byte[] destination, long expectedLength)
+        {
+            var read = stream.Read(destination, 0, (int)expectedLength);
+            if (read != expectedLength)
+            {
+                throw new PersistedDataException(string.Format("Read {0} bytes, expected {1}", read, expectedLength));
             }
         }
 
@@ -235,23 +244,39 @@ namespace MetricSystem.Data
             {
                 var startPosition = this.sourceStream.Position;
 
-                // Read the length of the next data block, including optional uncompressed length value and CRC32 of data.
-                var lengthData = new byte[sizeof(long)];
-                CheckedRead(lengthData, sizeof(long));
-                var length = BitConverter.ToInt64(lengthData, 0);
-                var dataLength = length - sizeof(uint);
+                // Read header values for the next block
+                var valueData = new byte[sizeof(long)];
+                long length;
+                long dataLength;
                 bool compressed;
-                PersistedDataProtocol.CompressionType compressionType;
-                length = PersistedDataProtocol.DeserializeBufferLengthValue(length, out compressed, out compressionType);
-                if (compressed)
+                uint crc32;
+                if (this.usePreviousProtocol)
                 {
-                    CheckedRead(lengthData, sizeof(long));
-                    dataLength = BitConverter.ToInt64(lengthData, 0);
+                    // legacy data is a four byte int, not 8.
+                    this.CheckedRead(valueData, sizeof(int));
+                    dataLength = length = BitConverter.ToInt32(valueData, 0);
+                    // for the legacy data we'll read we know it's never compressed.
+                    compressed = false;
+                    this.CheckedRead(valueData, sizeof(int));
+                    crc32 = BitConverter.ToUInt32(valueData, 0);
                 }
+                else
+                {
+                    this.CheckedRead(valueData, sizeof(long));
+                    length = BitConverter.ToInt64(valueData, 0);
 
-                var crcData = new byte[sizeof(uint)];
-                CheckedRead(crcData, sizeof(uint));
-                var crc32 = BitConverter.ToUInt32(crcData, 0);
+                    dataLength = length - sizeof(uint);
+                    PersistedDataProtocol.CompressionType compressionType;
+                    length = PersistedDataProtocol.DeserializeBufferLengthValue(length, out compressed,
+                                                                                out compressionType);
+                    if (compressed)
+                    {
+                        this.CheckedRead(valueData, sizeof(long));
+                        dataLength = BitConverter.ToInt64(valueData, 0);
+                    }
+                    this.CheckedRead(valueData, sizeof(uint));
+                    crc32 = BitConverter.ToUInt32(valueData, 0);
+                }
 
                 memoryStream = this.memoryStreamManager.GetStream("PersistedDataReader", (int)dataLength, true);
                 // Because we just use the underlying buffer the length won't be set by conventional methods, so we must do so
@@ -271,7 +296,7 @@ namespace MetricSystem.Data
                 }
                 else
                 {
-                    CheckedRead(buffer, dataLength);
+                    this.CheckedRead(buffer, dataLength);
                 }
 
                 var dataCRC = CRC32.Compute(buffer, dataLength);
@@ -290,6 +315,56 @@ namespace MetricSystem.Data
                 {
                     memoryStream.Dispose();
                 }
+                if (ex is EndOfStreamException || ex is InvalidDataException)
+                {
+                    throw new PersistedDataException("Stream data may be truncated", ex);
+                }
+
+                throw;
+            }
+        }
+
+        private unsafe PersistedDataHeader LoadLegacyHeader()
+        {
+            MemoryStream memoryStream = null;
+            try
+            {
+                // legacy data used a variant of LZ4Net.
+                var codec = new LZ4Codec(this.memoryStreamManager, LZ4Codec.CodecProvider.LZ4Net);
+                using (var decompressionStream = codec.GetStream(this.sourceStream, CompressionMode.Decompress, true))
+                {
+                    var lengthData = new byte[4];
+                    LegacyCheckedRead(decompressionStream, lengthData, sizeof(int));
+                    var length = BitConverter.ToUInt32(lengthData, 0);
+                    var crcData = new byte[4];
+                    LegacyCheckedRead(decompressionStream, crcData, sizeof(int));
+                    var crc32 = BitConverter.ToUInt32(crcData, 0);
+
+                    memoryStream = this.memoryStreamManager.GetStream("PersistedDataReader", (int)length, true);
+                    memoryStream.SetLength(length);
+                    var buffer = memoryStream.GetBuffer();
+                    LegacyCheckedRead(decompressionStream, buffer, length);
+                    var dataCRC = CRC32.Compute(buffer, length);
+
+                    if (crc32 != dataCRC)
+                    {
+                        throw new PersistedDataException(string.Format("CRC failed for data, expected {0} was {1}",
+                                                                       crc32, dataCRC));
+                    }
+
+                    PersistedDataHeader header;
+                    fixed (byte* buf = buffer)
+                    {
+                        header = new PersistedDataHeader(new BufferReader(buf, length));
+                    }
+
+                    memoryStream.Dispose();
+                    return header;
+                }
+            }
+            catch (Exception ex)
+            {
+                memoryStream?.Dispose();
                 if (ex is EndOfStreamException || ex is InvalidDataException)
                 {
                     throw new PersistedDataException("Stream data may be truncated", ex);
