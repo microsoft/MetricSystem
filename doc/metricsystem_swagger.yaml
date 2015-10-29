@@ -1,0 +1,413 @@
+swagger: '2.0'
+info:
+  title: MetricSystem API
+  description: All REST APIs can currently be supplied with data either in Bond compact binary format or JSON (note the JSON is internally deserialized to Bond, so Bond JSON peculiarities around certain elements must be honored). <BR><BR>Additionally, either Bond CB or JSON can be retrieved. The MIME type used to indicate Bond is bond/compact-binary, for JSON it is the standard application/json. When describing individual commands this document will use JSON-format values. For referencing the Bond types you can use the Schemas library.<br><br>Some commands the support the use of simplified 'glob' style patterns for filtering. Currently only the * (zero or more characters) and ? (one character) wildcards are supported. E.g. /Foo* will match /Foo, /Foo/Bar, etc.<br><br>*Timestamps in query parameters* can contain any rational format that .NET's DateTime.Parse method. The strongly recommended format is ISO 8601 with included timezone information (o when using ToString with a format parameter in .NET). If timezone information is not provided the default behavior is to use the local time of the service. It is strongly recommended to provide timezone data.<br><br>start specifies a start time for the query. <br><br>About Query Parameters - When using the parameter 'taco=spicy' you are instructing the query to match data for the 'taco' dimension only when it contains the value 'spicy'. Further applications of this are discussed below.
+
+  version: 1.0.0
+host: metricsystemtest.azurewebsites.net
+schemes:
+  - https
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /counters/{counterPattern}/info:
+    get:
+      summary: Information on MetricSystem counters
+      description: |
+        The Info endpoint returns basic information about the *MetricSystem* counters
+        stored on the given machine or in the given environment (if querying against an aggregator node).
+      parameters:
+        - name: counterPattern
+          in: path
+          description: Pattern to match counter names against
+          required: true
+          type: string
+          format: glob-style regex
+        - name: queryParameters
+          in: query
+          description: Optional parameters for the query
+          required: false
+          type: string
+          format: a=b&
+      tags:
+        - Info
+      responses:
+        '200':
+          description: An array of CounterInfo objects
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CounterInfo'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /counters/{counterPattern}/info?dimension={dimensionPattern}&{dimensionName}={dimensionValue}:
+    get:
+      summary: Details on specific counter(s) which will return all dimension values matching selection criteria
+      description: |
+        This query returns detailed information on the various counter objects (such as dimensions and dimension values). The special 'dimension' parameter can be used to request dimension values for one or more dimensions. When supplying the 'dimension' parameter the query performs glob pattern matching on the value supplied. <br><br>Example - /counters/Demo/\*/info?dimension=\*
+      parameters:
+        - name: counterPattern
+          in: path
+          description: Name of counter
+          required: true
+          type: string
+          format: Foo/Bar
+        - name: dimensionPattern
+          in: path
+          description: Dimension pattern for which you want values
+          required: true
+          type: string
+          format: glob-style regex
+        - name: dimensionName
+          in: path
+          description: Name of specific dimension to filter by
+          required: true
+          type: string
+          format: glob-style regex
+        - name: dimensionValue
+          in: path
+          description: Filter to limit dimension values
+          required: true
+          type: string
+          format: glob-style regex
+        - name: counterPattern
+          in: query
+          description: Pattern to match counter names against
+          required: true
+          type: string
+          format: glob-style regex
+        - name: queryParameters
+          in: query
+          description: Optional parameters for the query
+          required: false
+          type: array
+          items:
+            type: string
+          
+        - name: start
+          in: query
+          description: specifies a start time for the query.
+          required: true
+          type: string
+          format:  ISO formatted date string
+        - name: end
+          in: query
+          description: specifies an end time for the query.
+          required: true
+          type: string
+          format: ISO formatted date string
+      tags:
+        - Info
+      responses:
+        '200':
+          description: An array of CounterInfoResponse objects
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CounterInfo'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  
+
+  /counters/{counterName}/query&{filters}:
+        get:
+          summary: MetricSystem counter data
+          description: >
+             Returns data for a specified time window, based on certain filters (start=foo&end=bar&dimensionA=baz)
+          parameters:
+            - name: counterName
+              in: path
+              description: Name of the counter to query.
+              required: true
+              type: string
+              format: /Foo/Bar
+            - name: filters
+              in: path
+              description: Optional - specify dimension filters (a=foo&b=bar)
+              required: true
+              type: string
+              format: a=foo&b=bar
+            - name: server
+              in: query
+              description: Server to query
+              required: true
+              type: string
+              format: string
+            - name: start
+              in: query
+              description: specifies a start time for the query.
+              required: true
+              type: string
+              format:  ISO formatted date string
+            - name: end
+              in: query
+              description: specifies an end time for the query.
+              required: true
+              type: string
+              format: ISO formatted date string
+            - name: environment
+              in: query
+              description: specifies that the query should be restricted to services with a matching environment value.
+              required: true
+              type: string
+              format: env-prod-dc
+            - name: machineFunction
+              in: query
+              description: Parameters to filter query by (start=,end=,etc.)
+              required: true
+              type: string
+              format: MS
+            - name: datacenter
+              in: query
+              description: specifies that the query should be restricted to services with a matching datacenter value.
+              required: true
+              type: string
+              format: dc
+            - name: machine
+              in: query
+              description: Parameters to filter query by (start=,end=,etc.)
+              required: true
+              type: string
+              format: machineName
+            - name: percentile
+              in: query
+              description: controls queries against histogram counters
+              required: true
+              type: string
+              format: average/min/max/numeric (1 -> 99.999)
+            - name: aggregate
+              in: query
+              description: controls the behavior of time series aggregation when querying counters
+              required: true
+              type: boolean
+            - name: dimension
+              in: query
+              description: Split dimension for the query
+              required: true
+              type: string
+          tags:
+            - Data
+          responses:
+            '200':
+              description: An array of DataSample objects
+              schema:
+                type: array
+                items:
+                  $ref: '#/definitions/DataSample'
+            default:
+              description: Unexpected error
+              schema:
+                $ref: '#/definitions/Error'       
+                
+  /batch:
+    post:
+      summary: MetricSystem counter data
+      description: >
+         Returns data for a specified time window, based on certain filters (start=foo&end=bar&dimensionA=baz)
+      parameters:
+        - name: request
+          in: body
+          description: Batch query request
+          required: true
+          schema:
+            $ref: '#/definitions/BatchQueryRequest'
+      tags:
+        - Data
+      responses:
+        '200':
+          description: An array of DataSample objects
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DataSample'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /write:
+    post:
+      summary: Write MetricSystem data
+      description: 'This endpoint allows writing values into a server data store. The full path of the request is used as the counter name.'
+      parameters:
+        - name: data
+          in: body
+          description: Counter data to inject into MetricSystem
+          required: true
+          schema:
+            type: array
+            items:
+               $ref: '#/definitions/CounterWriteOperation'
+      tags:
+        - Write
+      responses:
+        '200':
+          description: All data is written successfully
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  CounterWriteOperation:
+    type: object
+    properties:
+      Value:
+        type: integer
+        format: int64
+        description: 'A 64 bit integer indicating the value to be written to the counter.'
+      DimensionValues:
+        type: array
+        items:
+          type: string
+        description: 'A list of paired strings of associated dimensions and their values to assign to the write. Unknown dimensions will be ignored, and dimensions configured for the counter but not supplied by the write will have a wildcard value written to them. Ex. DimensionA,ValueA,DimensionB,ValueB'
+      Count:
+        type: integer
+        format: int64
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+      Timestamp:
+        type: string
+        description: 'Override the current timestamp for counter insertion'
+  
+  BatchQueryRequest:
+    type: object
+    properties:
+      FanoutTimeoutInMilliseconds:
+        type: integer
+        format: int32
+        description: 'A integer value representing how long to wait prior to timing out the batch query as it cascades down the machines'
+      Queries:
+        type: array
+        items:
+          $ref: '#/definitions/BatchCounterQuery' 
+        description: 'A list of paired strings of associated dimensions and their values to assign to the write. Unknown dimensions will be ignored, and dimensions configured for the counter but not supplied by the write will have a wildcard value written to them. Ex. DimensionA,ValueA,DimensionB,ValueB'
+      Sources:
+        type: array
+        items:
+          type: string
+        description: 'A list of machines to request data from'
+  
+  BatchCounterQuery:
+    type: object
+    properties:
+      CounterName:
+        type: string
+        format: /Foo/Bar
+        description: 'Name of the counter'
+      QueryParameters:
+        type: array
+        items:
+          type: string
+        description: 'A list of parameters to filter the query by'
+
+  CounterInfo:
+    type: object
+    properties:
+      Name:
+        type: string
+        description: 'A 64 bit integer indicating the value to be written to the counter.'
+      Type:
+        type: integer
+        enum: ["histogram","hitcount","unknown"]
+        description: 'An integer enumeration containing the type of counter.'
+      StartTime:
+        type: integer
+        format: int64
+        description: 'A 64 bit integer indicating the start time of the bucket'
+      EndTime:
+        type: integer
+        format: int64
+        description: 'A 64 bit integer indicating the end time of the bucket'
+      Dimensions:
+        type: array
+        items:
+          type: string
+        description: 'A list of strings which contains known dimensions for a given counter'
+      DimensionValues:
+        type: array
+        items:
+          type: string
+        description: 'A list of dimension,array[dimensionValues] which contains dimension,dimensionValues[dimension]'
+  DataSample:
+    type: object
+    properties:
+      Name:
+        type: string
+        description: 'a string containing the name of the queried counter.'
+      Dimensions:
+        type: array
+        items:
+          type: string
+        description: 'A list of paired strings of associated dimensions and their values to assign to the write. Unknown dimensions will be ignored, and dimensions configured for the counter but not supplied by the write will have a wildcard value written to them. Ex. DimensionA,ValueA,DimensionB,ValueB'
+      StartTime:
+        type: integer
+        format: int64
+        description: 'A 64 bit integer indicating the start time of the bucket'
+      EndTime:
+        type: integer
+        format: int64
+        description: 'A 64 bit integer indicating the end time of the bucket'
+      SampleCount:
+        type: integer
+        format: int64
+        description: 'A 64 bit integer indicating the value to be written to the counter.'
+      SampleType:
+        type: integer
+        format: int32
+        description: 'an integer enumeration indicating the type of sample being returned. Possible values are None (should not be returned)
+HitCount (a direct count of the total hits represented by the query)
+Histogram (a set of key/value pairs representing the histogram for this query)
+Percentile (the value at a specified percentile for a histogram query)
+Average (the average value for a histogram query)
+Maximum (the maximum value for a histogram query)
+Minimum (the minimum value for a histogram query)'
+
+      Percentile:
+        type: integer
+        format: int64
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+
+      PercentileValue:
+        type: integer
+        format: int64
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+
+      Average:
+        type: integer
+        format: int64
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+
+      MinValue:
+        type: integer
+        format: int64
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+        
+        
+      MaxValue:
+        type: integer
+        format: int64
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+
+
+      MachineCount:
+        type: integer
+        format: int32
+        description: 'For histogram counters, provides count as part of the value:count dictionary'
+
+        
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
