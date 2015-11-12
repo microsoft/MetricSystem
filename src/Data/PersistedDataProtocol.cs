@@ -34,7 +34,81 @@ namespace MetricSystem.Data
         internal const ushort ProtocolVersion = 11;
         internal const ushort PreviousProtocolVersion = ProtocolVersion - 1;
 
-        internal const long CompressionFlag = 1 << 63; // Bit used to indicate that subsequent data will be in compressed form.
+        // The top byte of the 8 byte length of buffers is used to store data related to buffer compression. This leaves
+        // a theoretical max buffer size of 2^56-1 bytes, or 64PB. Shouldn't be a big deal.
+        private const int CompressionDataShiftWidth = 56;
+        private const long CompressionTypeMask = (long)0x7f << CompressionDataShiftWidth;
+        private const long CompressionFlag = (long)0x80 << CompressionDataShiftWidth;
+        public const long MaxBufferSize = ((long)1 << CompressionDataShiftWidth) - 1;
+
+        public enum CompressionType : long
+        {
+            GZip = 0,
+            LZ4 = 1,
+            None = 0x7f,
+        }
+
+        /// <summary>
+        /// Deserialize a length value and detect compression settings.
+        /// </summary>
+        /// <param name="originalValue">Original serialized value.</param>
+        /// <param name="isCompressed">Set to true if the buffer is compressed.</param>
+        /// <param name="compressionType">Set to the type of compression used for the buffer. Invalid values will result in a <see cref="PersistedDataException"/> being thrown.</param>
+        /// <returns>The actual length of the buffer.</returns>
+        public static long DeserializeBufferLengthValue(long originalValue, out bool isCompressed,
+                                                        out CompressionType compressionType)
+        {
+            if ((originalValue & CompressionFlag) != 0)
+            {
+                isCompressed = true;
+                compressionType = (CompressionType)((originalValue & CompressionTypeMask) >> CompressionDataShiftWidth);
+                CheckCompressionType(compressionType);
+            }
+            else
+            {
+                isCompressed = false;
+                compressionType = CompressionType.None;
+            }
+
+            return originalValue & MaxBufferSize;
+        }
+
+        /// <summary>
+        /// Prepares a buffer length value for serialization with the appropriate compression flags applied.
+        /// </summary>
+        /// <param name="bufferLength">Actual length of the buffer.</param>
+        /// <param name="isCompressed">Whether the buffer is compressed.</param>
+        /// <param name="compressionType">The type of compression used for the buffer. Invalid values will result in a <see cref="PersistedDataException"/> being thrown.</param>
+        /// <returns>The value to serialize.</returns>
+        public static long SerializeBufferLengthValue(long bufferLength, bool isCompressed,
+                                                      CompressionType compressionType)
+        {
+            if (bufferLength > MaxBufferSize)
+            {
+                throw new PersistedDataException("Buffer length is larger than maximum allowed buffer size.");
+            }
+
+            if (isCompressed)
+            {
+                CheckCompressionType(compressionType);
+                bufferLength |= CompressionFlag;
+                bufferLength |= ((long)compressionType << CompressionDataShiftWidth);
+            }
+
+            return bufferLength;
+        }
+
+        private static void CheckCompressionType(CompressionType compressionType)
+        {
+            switch (compressionType)
+            {
+            case CompressionType.GZip:
+                break;
+            // LZ4 support coming in separate revision.
+            default:
+                throw new PersistedDataException("Invalid buffer compression type " + compressionType);
+            }
+        }
 
         internal static Type GetTypeFromPersistedTypeCode(PersistedDataType typeCode)
         {

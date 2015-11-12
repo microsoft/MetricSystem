@@ -72,6 +72,7 @@
     <Compile Include="DateTimeExtensionMethodTests.cs" />
     <Compile Include="GlobTests.cs" />
     <Compile Include="HistogramExtensionMethodTests.cs" />
+    <Compile Include="LZ4Tests.cs" />
     <Compile Include="SemaphoreTaskRunnerTests.cs" />
     <Compile Include="SharedLockTests.cs" />
     <Compile Include="TestHttpServer.cs" />

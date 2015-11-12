@@ -104,6 +104,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="TestData\legacy_histogram.msdata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\legacy_hitcount.msdata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -154,10 +154,8 @@ namespace MetricSystem.Data.UnitTests
             }
         }
 
-        // NOTE: These tests are currently disabled since legacy data reading is not available.
-#if false
-        [TestCase(@"TestData\legacyhistogram.msdata")]
-        [TestCase(@"TestData\legacyhitcount.msdata")]
+        [TestCase(@"TestData\legacy_histogram.msdata")]
+        [TestCase(@"TestData\legacy_hitcount.msdata")]
         public void CanReadLegacyDataAndRewriteInNewFormat(string originalFileName)
         {
             var tempFile = Path.GetTempFileName();
@@ -239,6 +237,5 @@ namespace MetricSystem.Data.UnitTests
                 }
             }
         }
-#endif
     }
 }
