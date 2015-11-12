@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   title: MetricSystem API
-  description: All REST APIs can currently be supplied with data either in Bond compact binary format or JSON (note the JSON is internally deserialized to Bond, so Bond JSON peculiarities around certain elements must be honored). <BR><BR>Additionally, either Bond CB or JSON can be retrieved. The MIME type used to indicate Bond is bond/compact-binary, for JSON it is the standard application/json. When describing individual commands this document will use JSON-format values. For referencing the Bond types you can use the Schemas library.<br><br>Some commands the support the use of simplified 'glob' style patterns for filtering. Currently only the * (zero or more characters) and ? (one character) wildcards are supported. E.g. /Foo* will match /Foo, /Foo/Bar, etc.<br><br>*Timestamps in query parameters* can contain any rational format that .NET's DateTime.Parse method. The strongly recommended format is ISO 8601 with included timezone information (o when using ToString with a format parameter in .NET). If timezone information is not provided the default behavior is to use the local time of the service. It is strongly recommended to provide timezone data.<br><br>start specifies a start time for the query. <br><br>About Query Parameters - When using the parameter 'taco=spicy' you are instructing the query to match data for the 'taco' dimension only when it contains the value 'spicy'. Further applications of this are discussed below.
+  description: All REST APIs can currently be supplied with data either in Bond compact binary format or JSON (note the JSON is internally deserialized to Bond, so Bond JSON peculiarities around certain elements must be honored). Support for Bond will however eventually be retired, so it should not be relied on. <BR><BR>Additionally, either Bond CB or JSON can be retrieved. The MIME type used to indicate Bond is bond/compact-binary, for JSON it is the standard application/json. When describing individual commands this document will use JSON-format values. For referencing the Bond types you can use the Schemas library.<br><br>Some commands the support the use of simplified 'glob' style patterns for filtering. Currently only the * (zero or more characters) and ? (one character) wildcards are supported. E.g. /Foo* will match /Foo, /Foo/Bar, etc.<br><br>*Timestamps in query parameters* can contain any rational format that .NET's DateTime.Parse method. The strongly recommended format is ISO 8601 with included timezone information (o when using ToString with a format parameter in .NET). If timezone information is not provided the default behavior is to use the local time of the service. It is strongly recommended to provide timezone data.<br><br>start specifies a start time for the query. <br><br>About Query Parameters - When using the parameter 'taco=spicy' you are instructing the query to match data for the 'taco' dimension only when it contains the value 'spicy'. Further applications of this are discussed below.
 
   version: 1.0.0
 host: metricsystemtest.azurewebsites.net
@@ -23,7 +23,7 @@ paths:
           description: Pattern to match counter names against
           required: true
           type: string
-          format: glob-style regex
+          format: glob-style string pattern
         - name: queryParameters
           in: query
           description: Optional parameters for the query
@@ -60,25 +60,25 @@ paths:
           description: Dimension pattern for which you want values
           required: true
           type: string
-          format: glob-style regex
+          format: glob-style string pattern
         - name: dimensionName
           in: path
           description: Name of specific dimension to filter by
           required: true
           type: string
-          format: glob-style regex
+          format: glob-style string pattern
         - name: dimensionValue
           in: path
           description: Filter to limit dimension values
           required: true
           type: string
-          format: glob-style regex
+          format: glob-style string pattern
         - name: counterPattern
           in: query
           description: Pattern to match counter names against
           required: true
           type: string
-          format: glob-style regex
+          format: glob-style string pattern
         - name: queryParameters
           in: query
           description: Optional parameters for the query
@@ -92,13 +92,13 @@ paths:
           description: specifies a start time for the query.
           required: true
           type: string
-          format:  ISO formatted date string
+          format:  ISO 8601 formatted date string
         - name: end
           in: query
           description: specifies an end time for the query.
           required: true
           type: string
-          format: ISO formatted date string
+          format: ISO 8601 formatted date string
       tags:
         - Info
       responses:
@@ -143,13 +143,13 @@ paths:
               description: specifies a start time for the query.
               required: true
               type: string
-              format:  ISO formatted date string
+              format:  ISO 8601 formatted date string
             - name: end
               in: query
               description: specifies an end time for the query.
               required: true
               type: string
-              format: ISO formatted date string
+              format: ISO 8601 formatted date string
             - name: environment
               in: query
               description: specifies that the query should be restricted to services with a matching environment value.
@@ -411,3 +411,4 @@ Minimum (the minimum value for a histogram query)'
         type: string
       fields:
         type: string
+
