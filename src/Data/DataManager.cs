@@ -271,17 +271,17 @@ namespace MetricSystem.Data
                     this.currentProcess = null;
                 }
 
-                foreach (var counter in this.counters)
-                {
-                    counter.DataSet.Dispose();
-                }
-                this.counters.Clear();
-
                 if (this.taskRunner != null)
                 {
                     this.taskRunner.Dispose();
                     this.taskRunner = null;
                 }
+
+                foreach (var counter in this.counters)
+                {
+                    counter.DataSet.Dispose();
+                }
+                this.counters.Clear();
             }
         }
 
