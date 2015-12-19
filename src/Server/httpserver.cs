@@ -41,7 +41,7 @@ namespace MetricSystem.Server
 
         public bool Running
         {
-            get { return this.listener.IsListening; }
+            get { return this.listener != null && this.listener.IsListening; }
         }
 
         public void Dispose()
@@ -104,13 +104,13 @@ namespace MetricSystem.Server
 
             try
             {
-                if (this.listener == null || !this.Running)
+                if (!this.Running)
                 {
                     return;
                 }
 
                 var context = this.listener.EndGetContext(result);
-                OnRequestReceived(context);
+                this.OnRequestReceived(context);
             }
             catch (Exception ex)
             {
