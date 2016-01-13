@@ -1,0 +1,111 @@
+﻿extends layout
+
+
+
+block content
+        #wrapper.wrapper
+          .title metricsystem
+          |     
+          #queryBuilder.queryBuilder
+            h3 TIME
+            |         
+            .aggFunction
+              div
+                label(for='start') Start
+                |                 
+                #start.select2-container
+                  input(type='text', name='start', value='')
+                  |                     
+                  span.add-on
+                    i.fa.fa-calendar
+              |             
+              div
+                label(for='end') End
+                |                 
+                #end.select2-container
+                  input(type='text', name='end', value='')
+                  |                     
+                  span.add-on
+                    i.fa.fa-calendar
+            |         
+            h3 MACHINES
+            |         
+            .aggFunction
+              label(for='EnvironmentList') Environment
+              |             
+              select#EnvironmentList(data-placeholder='Select environment...', onselect=' updateCounters() ')
+            |         
+            .envOptions
+              input#queryEnvironment(type='radio', name='machineEntry', value='queryEnvironment', checked='checked')
+              label(for='queryEnvironment') Query entire environment
+              br
+              |             
+              input#machineList(type='radio', name='machineEntry', value='machineList')
+              label(for='machineList') Select machines from list
+              br
+              |             
+              input#manualMode(type='radio', name='machineEntry', value='manualMode')
+              label(for='manualMode') Manual machineName entry
+              br
+            |         
+            #machineNameWrapper
+              select#machineName(multiple='')
+                option 127.0.0.1
+              |             
+              input#manualMachineName(name='manualMachineName', placeholder='Machine names (comma separated)', style='display: none')
+            |             
+            h3 METRIC
+            |         
+            select#counters(name='counters' data-placeholder='Select counter...')
+            |         
+            h3 FILTERS
+            |         
+            #dimensionGrid
+            |         
+            h3 OPTIONS
+            |    
+            .splitBy
+              label(for='splitBy') Split by
+              select#splitBy(name='splitBy')
+                option none
+            label(for='timeout') Timeout
+            input#timeout.select2-container(name='timeout', value='2500')
+            br
+            label(for='percentile') Percentile
+            input#percentile.select2-container(name='percentile', placeholder='Percentile')
+            label(for='graphId') Choose graph
+            select#graphId(name='graphId', class='typeahead', class='typeahead', placeholder='Append to existing graph?')
+            |         
+            button.getData(id='getData') Get Data
+            |         
+            .messages
+              #loading
+                h3
+                  i.fa.fa-spinner.fa-spin
+                  | Loading data...
+          |     
+          .resultPane
+            .gridster
+              ul
+            #chart 
+              svg
+
+        script(type='text/javascript', src='//code.jquery.com/jquery-2.1.1.min.js')
+        script(type='text/javascript', src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js')
+        script(src='//tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/jquery.gridster/0.5.6/jquery.gridster.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.6/js/jquery.dataTables.min.js')
+        script(src='//code.highcharts.com/stock/highstock.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js')
+        script(src='/javascripts/metricsystem.js')
+        <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/css/select2.min.css" rel="stylesheet" />
+       
+
+        <script>hydrateWires(
+        !=wires
+        )</script>

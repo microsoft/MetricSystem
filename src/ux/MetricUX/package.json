@@ -1,0 +1,26 @@
+{
+  "name": "MetricUX",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "description": "MetricUX",
+  "author": {
+    "name": "jordane",
+    "email": ""
+  },
+  "dependencies": {
+    "body-parser": "~1.8.1",
+    "cookie-parser": "~1.3.3",
+    "debug": "~2.0.0",
+    "express": "~4.9.0",
+    "jade": "~1.6.0",
+    "morgan": "~1.3.0",
+    "request": "2.55.0",
+    "serve-favicon": "~2.1.3",
+    "stylus": "0.42.3",
+    "tsd": "^0.5.7",
+    "typescript": "^1.5.0-alpha"
+  }
+}
